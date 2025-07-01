@@ -17,6 +17,21 @@ app.use(
     methods: ["GET", "POST"],
   })
 );
+
+app.use(express.json());
+
+// Health check endpoint for Render
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ message: "Hey you are there?" });
+});
+
+
+
 // Store connected users
 const users = new Map(); // Map to store socket ID -> user data
 
@@ -221,12 +236,12 @@ io.on("connection", (socket) => {
             status: "error",
             error: `Recipient ${recipientId} not found`,
           });
-      } 
+      }
     }
   );
   //
   // Handle disconnection
-  socket.on("disconnect", () => { 
+  socket.on("disconnect", () => {
     const userData = users.get(socket.id);
     if (userData) {
       console.log(`${userData.username} disconnected (socket ${socket.id})`);
@@ -236,6 +251,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(5000, () => {
+server.listen(3000, () => {
   console.log("WebSocket server running on port 5000");
 });
+
+// app.listen(3001);
